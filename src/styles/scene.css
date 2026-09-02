@@ -87,7 +87,6 @@
 .scene__bg {
   position: absolute;
   inset: -3%;
-  background-image: var(--bg-src);
   background-size: cover;
   background-position: center 42%;
   transform: translate3d(0, 0, 0) scale(1.035);
@@ -167,7 +166,6 @@
   left: calc(var(--char-h) * -0.075);
   height: var(--char-h);
   width: calc(var(--char-h) * 1024 / 1536);
-  background-image: var(--char-src);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   animation: char-breathe 7.5s ease-in-out infinite;

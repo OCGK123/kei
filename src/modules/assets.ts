@@ -58,11 +58,14 @@ export async function preloadScene(onProgress: (fraction: number) => void): Prom
     ),
   );
 
-  // Hand the resolved URLs to CSS. Quoting guards against any character in the
-  // base path that would otherwise terminate the url() token early.
-  const root = document.documentElement;
-  root.style.setProperty('--bg-src', `url("${ASSETS.background}")`);
-  root.style.setProperty('--char-src', `url("${ASSETS.char}")`);
+  // Set layer images directly so relative URLs resolve against the document,
+  // not against the built CSS file under ./assets/.
+  document
+    .querySelector<HTMLElement>('[data-layer-bg]')
+    ?.style.setProperty('background-image', `url("${ASSETS.background}")`);
+  document
+    .querySelector<HTMLElement>('[data-char-inner]')
+    ?.style.setProperty('background-image', `url("${ASSETS.char}")`);
 
   onProgress(1);
   return { ok: true };

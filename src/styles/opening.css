@@ -15,7 +15,6 @@
      1400 technical readout types (driven from TS)
      2200 corner brackets snap
      2500 MISSION START band rockets across
-     2950 subtitle
      3350 speed lines burst
      3800 white flash begins
 
@@ -362,28 +361,12 @@
   opacity: 0;
 }
 
-.op__mission-sub {
-  margin-top: clamp(10px, 1.8vmin, 22px);
-  text-align: center;
-  font-family: var(--font-kr);
-  font-weight: 700;
-  font-size: clamp(11px, 1.9vmin, 20px);
-  letter-spacing: 0.5em;
-  text-indent: 0.5em;
-  color: var(--ba-cyan-300);
-  opacity: 0;
-}
-
 .op.is-playing .op__mission-bar {
   animation: mission-bar 900ms var(--ease-out-hard) 2500ms both;
 }
 
 .op.is-playing .op__mission-text {
   animation: mission-text 820ms var(--ease-slam) 2660ms both;
-}
-
-.op.is-playing .op__mission-sub {
-  animation: mission-sub 620ms var(--ease-out-hard) 2950ms both;
 }
 
 @keyframes mission-bar {
@@ -414,17 +397,6 @@
   100% {
     opacity: 1;
     transform: translateX(0) skewX(0deg);
-  }
-}
-
-@keyframes mission-sub {
-  from {
-    opacity: 0;
-    letter-spacing: 1.2em;
-  }
-  to {
-    opacity: 1;
-    letter-spacing: 0.5em;
   }
 }
 
