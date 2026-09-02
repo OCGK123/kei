@@ -39,6 +39,8 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
+        with:
+          enablement: true
 
       # path is NOT optional: upload-pages-artifact defaults to _site/,
       # while Vite emits dist/.
