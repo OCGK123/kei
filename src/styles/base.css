@@ -1,0 +1,57 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #000;
+  color: var(--ba-paper);
+  font-family: var(--font-kr);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The whole experience is a fixed full-viewport stage. */
+#boot,
+#opening,
+#flash,
+#scene {
+  position: fixed;
+  inset: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ba-cyan-400);
+  outline-offset: 3px;
+}
+
+/* Utility: the recurring Blue Archive "cut corner" clip. */
+.cut-tr {
+  clip-path: polygon(0 0, calc(100% - 0.7em) 0, 100% 0.7em, 100% 100%, 0 100%);
+}
+
+.cut-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0.7em 100%, 0 calc(100% - 0.7em));
+}

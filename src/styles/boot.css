@@ -1,0 +1,135 @@
+/* ============================================================
+   BOOT — pure black, click to start.
+   Only Kei's halo and the prompt. The site name is deliberately
+   withheld until the main page.
+   ============================================================ */
+
+.boot {
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: #000;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 420ms var(--ease-in-hard);
+}
+
+.boot.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot__inner {
+  display: grid;
+  justify-items: center;
+  padding: 6vmin;
+  text-align: center;
+  animation: boot-in 1600ms var(--ease-out-hard) both;
+}
+
+@keyframes boot-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- halo -----------------------------------------------------------
+   The real halo, lifted straight out of the character art. It is drawn
+   in perspective, so it bobs and drifts rather than spinning flat. */
+.boot__halo {
+  display: block;
+  width: clamp(210px, 34vmin, 420px);
+  height: auto;
+  margin-bottom: clamp(20px, 5vmin, 56px);
+  filter: drop-shadow(0 0 18px rgb(255 47 126 / 0.55))
+    drop-shadow(0 0 56px rgb(255 47 126 / 0.28));
+  animation: boot-halo-float 6s ease-in-out infinite;
+}
+
+@keyframes boot-halo-float {
+  0%,
+  100% {
+    transform: translateY(-5px) rotate(-0.8deg) scale(0.995);
+    opacity: 0.86;
+  }
+  50% {
+    transform: translateY(5px) rotate(0.8deg) scale(1.005);
+    opacity: 1;
+  }
+}
+
+/* --- call to action ------------------------------------------------ */
+.boot__cta {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vmin, 22px);
+  animation: boot-breathe 2.4s ease-in-out infinite;
+}
+
+.boot__cta-line {
+  display: block;
+  width: clamp(28px, 7vmin, 78px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(143 230 255 / 0.85));
+}
+
+.boot__cta-line:last-of-type {
+  background: linear-gradient(270deg, transparent, rgb(143 230 255 / 0.85));
+}
+
+.boot__cta-text {
+  font-family: var(--font-tech);
+  font-weight: 600;
+  font-size: clamp(12px, 1.9vmin, 19px);
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  color: #fff;
+}
+
+@keyframes boot-breathe {
+  0%,
+  100% {
+    opacity: 0.42;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.boot__sub {
+  margin: clamp(10px, 1.8vmin, 18px) 0 0;
+  font-size: clamp(11px, 1.5vmin, 14px);
+  letter-spacing: 0.16em;
+  color: rgb(195 210 228 / 0.4);
+}
+
+/* --- preload readout ----------------------------------------------- */
+.boot__loading {
+  margin: clamp(26px, 6vmin, 56px) 0 0;
+  font-family: var(--font-tech);
+  font-size: clamp(9px, 1.2vmin, 12px);
+  letter-spacing: 0.34em;
+  color: rgb(143 230 255 / 0.42);
+  transition: opacity 500ms linear;
+}
+
+.boot__loading.is-done {
+  opacity: 0;
+}
+
+/* The prompt only becomes clickable once the assets are in. */
+.boot:not(.is-ready) .boot__cta,
+.boot:not(.is-ready) .boot__sub {
+  opacity: 0.18;
+  animation: none;
+}
+
+.boot:not(.is-ready) {
+  cursor: progress;
+}

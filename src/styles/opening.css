@@ -1,0 +1,587 @@
+/* ============================================================
+   OPENING — Blue Archive style mission-start transition.
+
+   The whole timeline is expressed as CSS animation-delays keyed off a
+   single `.is-playing` class, so every beat stays frame-locked to the
+   same clock. Beat table (ms from start):
+
+     0    scanline sweeps down
+     180  diagonal band 1 (navy)      from left
+     300  diagonal band 2 (navy)      from right
+     420  diagonal band 3 (blue)      from left
+     540  diagonal band 4 (cyan hair) from right
+     700  dot grid drifts in
+     820  halo slams in, then floats
+     1400 technical readout types (driven from TS)
+     2200 corner brackets snap
+     2500 MISSION START band rockets across
+     2950 subtitle
+     3350 speed lines burst
+     3800 white flash begins
+
+   The site name appears nowhere here — it belongs to the main page.
+   ============================================================ */
+
+.op {
+  z-index: 50;
+  overflow: hidden;
+  background: #000;
+}
+
+.op__bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 46%, #16243c 0%, #080b14 58%, #000 100%);
+  opacity: 0;
+}
+
+.op.is-playing .op__bg {
+  animation: op-bg 900ms var(--ease-out-hard) 120ms both;
+}
+
+@keyframes op-bg {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- diagonal bands ---------------------------------------- */
+.op__bands {
+  position: absolute;
+  inset: -20%;
+  overflow: hidden;
+}
+
+.op__band {
+  position: absolute;
+  left: -30%;
+  width: 160%;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+.op__band--1 {
+  top: 18%;
+  height: 22vmin;
+  background: linear-gradient(90deg, #16243c 0%, #1d3355 62%, rgb(29 51 85 / 0));
+}
+
+.op__band--2 {
+  top: 44%;
+  height: 15vmin;
+  background: linear-gradient(270deg, #101827 0%, #16243c 60%, rgb(22 36 60 / 0));
+}
+
+.op__band--3 {
+  top: 62%;
+  height: 9vmin;
+  background: linear-gradient(90deg, var(--ba-blue-500) 0%, rgb(47 111 208 / 0.15) 78%, transparent);
+  mix-blend-mode: screen;
+}
+
+.op__band--4 {
+  top: 33%;
+  height: 0.5vmin;
+  background: linear-gradient(270deg, var(--ba-cyan-300), rgb(79 210 255 / 0));
+  box-shadow: 0 0 18px rgb(79 210 255 / 0.7);
+}
+
+.op.is-playing .op__band--1 {
+  animation: band-from-left 760ms var(--ease-swipe) 180ms both;
+}
+.op.is-playing .op__band--2 {
+  animation: band-from-right 760ms var(--ease-swipe) 300ms both;
+}
+.op.is-playing .op__band--3 {
+  animation: band-from-left 700ms var(--ease-swipe) 420ms both;
+}
+.op.is-playing .op__band--4 {
+  animation: band-from-right 620ms var(--ease-swipe) 540ms both;
+}
+
+@keyframes band-from-left {
+  from {
+    opacity: 0;
+    transform: rotate(var(--skew)) translateX(-140%);
+  }
+  12% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--skew)) translateX(0);
+  }
+}
+
+@keyframes band-from-right {
+  from {
+    opacity: 0;
+    transform: rotate(var(--skew)) translateX(140%);
+  }
+  12% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--skew)) translateX(0);
+  }
+}
+
+/* ---------- dot grid ---------------------------------------------- */
+.op__grid {
+  position: absolute;
+  inset: -10%;
+  opacity: 0;
+  background-image: radial-gradient(rgb(143 230 255 / 0.28) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(90% 70% at 50% 50%, #000 25%, transparent 78%);
+}
+
+.op.is-playing .op__grid {
+  animation:
+    op-grid-in 700ms var(--ease-out-hard) 700ms both,
+    op-grid-drift 9s linear 700ms infinite;
+}
+
+@keyframes op-grid-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes op-grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 260px -260px;
+  }
+}
+
+/* ---------- scanline ---------------------------------------------- */
+.op__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  top: 0;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ba-cyan-300) 18%,
+    #fff 50%,
+    var(--ba-cyan-300) 82%,
+    transparent
+  );
+  box-shadow: 0 0 26px rgb(143 230 255 / 0.9);
+}
+
+.op.is-playing .op__scan {
+  animation: op-scan 620ms var(--ease-out-hard) 0ms both;
+}
+
+@keyframes op-scan {
+  0% {
+    top: 0;
+    opacity: 0;
+    transform: scaleX(0.2);
+  }
+  14% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  86% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- halo ---------------------------------------------------
+   Kei's own halo, extracted from the character art. It is a perspective
+   drawing, so it slams in and then bobs — never spins flat. */
+.op__halo {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: clamp(260px, 46vmin, 620px);
+  translate: -50% -50%;
+  opacity: 0;
+}
+
+/* The glow lives on the image, not the wrapper: the entry keyframes animate
+   `filter` on the wrapper, and a drop-shadow declared there would be replaced
+   by the blur and never come back. */
+.op__halo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 22px rgb(255 47 126 / 0.7))
+    drop-shadow(0 0 70px rgb(255 47 126 / 0.32));
+}
+
+.op.is-playing .op__halo {
+  animation:
+    op-halo-in 1000ms var(--ease-slam) 820ms both,
+    op-halo-float 5s ease-in-out 1820ms infinite;
+}
+
+@keyframes op-halo-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.45) translateY(26px);
+    filter: blur(12px);
+  }
+  55% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes op-halo-float {
+  0%,
+  100% {
+    transform: translateY(-7px) rotate(-0.7deg);
+  }
+  50% {
+    transform: translateY(7px) rotate(0.7deg);
+  }
+}
+
+/* ---------- technical readout -------------------------------------- */
+.op__readout {
+  position: absolute;
+  left: clamp(16px, 5vw, 84px);
+  bottom: clamp(90px, 18vh, 190px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-tech);
+  font-size: clamp(9px, 1.28vmin, 13px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: rgb(143 230 255 / 0.78);
+  text-align: left;
+}
+
+.op__readout li {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  height: 1.85em;
+  opacity: 0;
+  transform: translateX(-12px);
+  white-space: nowrap;
+}
+
+.op__readout li.is-in {
+  animation: readout-in 320ms var(--ease-out-hard) both;
+}
+
+.op__readout li::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  flex: none;
+  background: var(--ba-cyan-400);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px rgb(79 210 255 / 0.9);
+}
+
+.op__readout b {
+  font-weight: 700;
+  color: #fff;
+}
+
+@keyframes readout-in {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- MISSION START band ------------------------------------- */
+.op__mission {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.op__mission-bar {
+  position: relative;
+  height: clamp(58px, 13vmin, 148px);
+  background: linear-gradient(
+    100deg,
+    rgb(8 11 20 / 0.94) 0%,
+    #16243c 26%,
+    var(--ba-blue-500) 62%,
+    var(--ba-cyan-400) 100%
+  );
+  transform: rotate(-3deg) scaleX(0);
+  transform-origin: 0% 50%;
+  opacity: 0;
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 0 0 2px rgb(143 230 255 / 0.35) inset,
+    0 18px 60px rgb(0 0 0 / 0.7);
+}
+
+.op__mission-text {
+  font-family: var(--font-tech);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(22px, 6.2vmin, 78px);
+  letter-spacing: 0.14em;
+  color: #fff;
+  text-shadow: 0 0 24px rgb(0 0 0 / 0.5);
+  transform: translateX(-100vw);
+  opacity: 0;
+}
+
+.op__mission-sub {
+  margin-top: clamp(10px, 1.8vmin, 22px);
+  text-align: center;
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(11px, 1.9vmin, 20px);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: var(--ba-cyan-300);
+  opacity: 0;
+}
+
+.op.is-playing .op__mission-bar {
+  animation: mission-bar 900ms var(--ease-out-hard) 2500ms both;
+}
+
+.op.is-playing .op__mission-text {
+  animation: mission-text 820ms var(--ease-slam) 2660ms both;
+}
+
+.op.is-playing .op__mission-sub {
+  animation: mission-sub 620ms var(--ease-out-hard) 2950ms both;
+}
+
+@keyframes mission-bar {
+  0% {
+    opacity: 0;
+    transform: rotate(-3deg) scaleX(0);
+  }
+  10% {
+    opacity: 1;
+  }
+  62% {
+    transform: rotate(-3deg) scaleX(1);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-3deg) scaleX(1);
+  }
+}
+
+@keyframes mission-text {
+  0% {
+    opacity: 0;
+    transform: translateX(-60vw) skewX(-14deg);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) skewX(0deg);
+  }
+}
+
+@keyframes mission-sub {
+  from {
+    opacity: 0;
+    letter-spacing: 1.2em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.5em;
+  }
+}
+
+/* ---------- speed lines -------------------------------------------- */
+.op__speed {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  mask-image: radial-gradient(70% 60% at 50% 50%, transparent 18%, #000 62%);
+}
+
+.op.is-playing .op__speed {
+  animation: speed-wrap 900ms linear 3350ms both;
+}
+
+@keyframes speed-wrap {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.op__speed span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 2px;
+  width: 46vmax;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0.95) 100%);
+  animation: speed-line 620ms var(--ease-in-hard) infinite;
+}
+
+@keyframes speed-line {
+  from {
+    opacity: 0;
+    scale: 0.05 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 1 1;
+  }
+}
+
+/* ---------- corner brackets ---------------------------------------- */
+.op__frame {
+  position: absolute;
+  inset: clamp(14px, 3vmin, 40px);
+  pointer-events: none;
+}
+
+.op__corner {
+  position: absolute;
+  width: clamp(30px, 6vmin, 74px);
+  height: clamp(30px, 6vmin, 74px);
+  border: 2px solid rgb(143 230 255 / 0.8);
+  opacity: 0;
+}
+
+.op__corner--tl {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.op__corner--tr {
+  top: 0;
+  right: 0;
+  border-left: 0;
+  border-bottom: 0;
+}
+.op__corner--bl {
+  bottom: 0;
+  left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+.op__corner--br {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+}
+
+.op.is-playing .op__corner {
+  animation: corner-in 420ms var(--ease-slam) 2200ms both;
+}
+
+.op.is-playing .op__corner--tr {
+  animation-delay: 2260ms;
+}
+.op.is-playing .op__corner--bl {
+  animation-delay: 2320ms;
+}
+.op.is-playing .op__corner--br {
+  animation-delay: 2380ms;
+}
+
+@keyframes corner-in {
+  from {
+    opacity: 0;
+    scale: 1.7;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* ---------- skip --------------------------------------------------- */
+.op__skip {
+  position: absolute;
+  right: clamp(16px, 3.4vmin, 44px);
+  bottom: clamp(16px, 3.4vmin, 44px);
+  padding: 0.65em 1.1em 0.65em 1.4em;
+  max-width: calc(100% - 32px);
+  font-family: var(--font-tech);
+  font-size: clamp(10px, 1.4vmin, 14px);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: rgb(242 246 251 / 0.75);
+  background: rgb(8 11 20 / 0.55);
+  border: 1px solid rgb(143 230 255 / 0.32);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  opacity: 0;
+  transition:
+    color 180ms linear,
+    border-color 180ms linear,
+    background 180ms linear;
+}
+
+.op.is-playing .op__skip {
+  animation: skip-in 500ms var(--ease-out-hard) 900ms both;
+}
+
+.op__skip:hover {
+  color: #fff;
+  border-color: var(--ba-cyan-400);
+  background: rgb(47 111 208 / 0.35);
+}
+
+@keyframes skip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

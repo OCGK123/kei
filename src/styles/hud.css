@@ -1,0 +1,244 @@
+/* ============================================================
+   HUD — the chrome over the scene.
+
+   The character sits on the left, so everything readable is pushed to
+   the right rail: clock at the top, the site name on the optical
+   centre line, controls at the foot.
+   ============================================================ */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: var(--hud-pad);
+  gap: var(--hud-pad);
+  pointer-events: none;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
+
+.scene.is-live .hud > * {
+  animation: hud-in 900ms var(--ease-out-hard) both;
+}
+
+.scene.is-live .hud__top {
+  animation-delay: 1600ms;
+}
+.scene.is-live .hud__title {
+  animation-delay: 1850ms;
+}
+.scene.is-live .hud__bottom {
+  animation-delay: 2250ms;
+}
+
+@keyframes hud-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* ---------- top bar ------------------------------------------------ */
+.hud__top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.hud__clock {
+  font-family: var(--font-tech);
+  font-size: clamp(11px, 1.7vmin, 18px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  padding: 0.4em 0.9em;
+  background: rgb(8 11 20 / 0.42);
+  border: 1px solid rgb(143 230 255 / 0.28);
+  backdrop-filter: blur(6px);
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+}
+
+/* ---------- title block -------------------------------------------- */
+.hud__title {
+  align-self: center;
+  justify-self: end;
+  display: grid;
+  justify-items: end;
+  gap: clamp(10px, 1.6vmin, 18px);
+  /* NOT `ch`: that unit resolves against the inherited 16px font, not the
+     display size, and clamped the block to ~450px — which broke the name
+     mid-syllable. */
+  max-width: min(760px, 56vw);
+  text-align: right;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-weight: 900;
+  font-size: clamp(30px, 6.6vmin, 92px);
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  /* Korean-aware wrapping: never split a word, and keep the run of bangs
+     welded to the last syllable. */
+  word-break: keep-all;
+  overflow-wrap: normal;
+  color: #fff;
+  text-shadow:
+    0 2px 30px rgb(8 11 20 / 0.9),
+    0 0 60px rgb(255 47 126 / 0.18);
+}
+
+.title em {
+  display: inline-block;
+  font-style: normal;
+  white-space: nowrap;
+  color: var(--halo-mid);
+  letter-spacing: -0.075em;
+  text-shadow:
+    0 2px 24px rgb(8 11 20 / 0.9),
+    0 0 26px rgb(255 47 126 / 0.75);
+}
+
+.title__rule {
+  display: block;
+  width: min(280px, 34vw);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--halo-mid) 55%, var(--ba-cyan-300));
+  box-shadow: 0 0 14px rgb(255 47 126 / 0.5);
+  transform: skewX(var(--skew));
+}
+
+/* the one surviving readout: the global visit tally */
+.tally {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85em;
+  margin: 0;
+  padding: 0.42em 0.85em 0.46em;
+  font-family: var(--font-tech);
+  background: rgb(8 11 20 / 0.46);
+  border: 1px solid rgb(143 230 255 / 0.24);
+  backdrop-filter: blur(6px);
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+}
+
+.tally__label {
+  font-size: clamp(8px, 1.05vmin, 11px);
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  color: rgb(143 230 255 / 0.85);
+}
+
+.tally__value {
+  font-size: clamp(17px, 2.5vmin, 30px);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow:
+    0 1px 10px rgb(8 11 20 / 0.9),
+    0 0 20px rgb(79 210 255 / 0.4);
+}
+
+.tally__value.is-rolling {
+  color: var(--ba-cyan-300);
+}
+
+/* ---------- bottom controls ---------------------------------------- */
+.hud__bottom {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.2vw, 14px);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.62em 1.25em;
+  font-family: var(--font-tech);
+  font-size: clamp(9px, 1.16vmin, 12px);
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: rgb(242 246 251 / 0.86);
+  background: rgb(8 11 20 / 0.5);
+  border: 1px solid rgb(143 230 255 / 0.28);
+  backdrop-filter: blur(8px);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition:
+    color 160ms linear,
+    border-color 160ms linear,
+    background 160ms linear,
+    transform 160ms var(--ease-out-hard);
+}
+
+.ctrl:hover {
+  color: #fff;
+  border-color: var(--ba-cyan-400);
+  background: rgb(47 111 208 / 0.34);
+  transform: translateY(-2px);
+}
+
+.ctrl:active {
+  transform: translateY(0);
+}
+
+.ctrl__icon {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  background: var(--ba-cyan-400);
+  box-shadow: 0 0 10px rgb(79 210 255 / 0.9);
+  transition:
+    background 160ms linear,
+    box-shadow 160ms linear;
+}
+
+/* muted state */
+.ctrl[aria-pressed='false'] .ctrl__icon {
+  background: rgb(195 210 228 / 0.3);
+  box-shadow: none;
+}
+
+.ctrl__icon--replay {
+  background: var(--halo-mid);
+  box-shadow: 0 0 10px rgb(255 47 126 / 0.85);
+  transform: rotate(45deg);
+}
+
+/* ---------- narrow screens ----------------------------------------- */
+@media (max-width: 620px) {
+  .hud__title {
+    align-self: end;
+    max-width: 100%;
+  }
+  .hud__clock {
+    font-size: 11px;
+  }
+  .hud__bottom {
+    justify-content: center;
+  }
+}
+
+@media (max-height: 460px) {
+  .hud__title {
+    gap: 6px;
+  }
+  .title {
+    font-size: clamp(22px, 8vmin, 40px);
+  }
+}

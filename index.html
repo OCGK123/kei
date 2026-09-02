@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <title>뭐하는거에요!!!!!!!!</title>
+    <meta name="description" content="뭐하는거에요!!!!!!!!" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="뭐하는거에요!!!!!!!!" />
+    <meta property="og:description" content="뭐하는거에요!!!!!!!!" />
+    <meta property="og:image" content="./char.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="image" href="./background.png" />
+    <link rel="preload" as="image" href="./char.png" />
+    <link rel="preload" as="image" href="./halo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,500;1,600;1,700&family=Gothic+A1:wght@300;400;500;700;800;900&display=swap"
+    />
+  </head>
+  <body>
+    <!-- ==== BOOT : black screen, click to start ====================
+         Nothing but the halo and the prompt. The site name is held back
+         for the main page. -->
+    <div id="boot" class="boot" role="button" tabindex="0" aria-label="클릭해서 시작">
+      <div class="boot__inner">
+        <img class="boot__halo" src="./halo.png" alt="" aria-hidden="true" decoding="async" />
+
+        <div class="boot__cta">
+          <span class="boot__cta-line" aria-hidden="true"></span>
+          <span class="boot__cta-text">CLICK TO START</span>
+          <span class="boot__cta-line" aria-hidden="true"></span>
+        </div>
+        <p class="boot__sub">화면을 클릭하면 시작합니다</p>
+
+        <p class="boot__loading" data-boot-loading>ASSETS · <span data-boot-pct>0</span>%</p>
+      </div>
+    </div>
+
+    <!-- ==== OPENING : Blue Archive style mission-start sequence ===== -->
+    <div id="opening" class="op" aria-hidden="true" hidden>
+      <div class="op__bg"></div>
+
+      <!-- diagonal band stack -->
+      <div class="op__bands">
+        <span class="op__band op__band--1"></span>
+        <span class="op__band op__band--2"></span>
+        <span class="op__band op__band--3"></span>
+        <span class="op__band op__band--4"></span>
+      </div>
+
+      <!-- moving dot grid -->
+      <div class="op__grid"></div>
+
+      <!-- scanline sweep -->
+      <div class="op__scan"></div>
+
+      <!-- halo -->
+      <div class="op__halo">
+        <img src="./halo.png" alt="" aria-hidden="true" decoding="async" />
+      </div>
+
+      <!-- technical readout -->
+      <ul class="op__readout" data-op-readout></ul>
+
+      <!-- mission start band -->
+      <div class="op__mission">
+        <div class="op__mission-bar">
+          <span class="op__mission-text">MISSION&nbsp;START</span>
+        </div>
+        <div class="op__mission-sub">전투를 시작합니다</div>
+      </div>
+
+      <!-- speed lines -->
+      <div class="op__speed" data-op-speed></div>
+
+      <!-- corner brackets -->
+      <div class="op__frame">
+        <span class="op__corner op__corner--tl"></span>
+        <span class="op__corner op__corner--tr"></span>
+        <span class="op__corner op__corner--bl"></span>
+        <span class="op__corner op__corner--br"></span>
+      </div>
+
+      <button type="button" class="op__skip" data-op-skip>SKIP <span aria-hidden="true">▶▶</span></button>
+    </div>
+
+    <!-- ==== FLASH : white wash that slowly clears ==================== -->
+    <div id="flash" class="flash" aria-hidden="true"></div>
+
+    <!-- ==== MAIN SCENE ============================================== -->
+    <main id="scene" class="scene" aria-hidden="true">
+      <div class="scene__stage" data-stage>
+        <div class="scene__bg" data-layer-bg></div>
+        <div class="scene__bg-grade" aria-hidden="true"></div>
+        <div class="scene__glow" data-layer-glow aria-hidden="true"></div>
+        <div class="scene__char" data-layer-char>
+          <div class="scene__char-inner" data-char-inner></div>
+        </div>
+        <div class="scene__vignette" aria-hidden="true"></div>
+        <div class="scene__dust" data-layer-dust aria-hidden="true"></div>
+      </div>
+
+      <div class="hud" data-hud>
+        <header class="hud__top">
+          <div class="hud__clock" data-hud-clock>--:--:--</div>
+        </header>
+
+        <div class="hud__title">
+          <h1 class="title">뭐하는거에요<em>!!!!!!!!</em></h1>
+          <span class="title__rule" aria-hidden="true"></span>
+          <p class="tally" aria-live="polite">
+            <span class="tally__label">TOTAL VISITS</span>
+            <span class="tally__value" data-count-total>—</span>
+          </p>
+        </div>
+
+        <footer class="hud__bottom">
+          <button type="button" class="ctrl" data-audio-toggle aria-pressed="false">
+            <span class="ctrl__icon" data-audio-icon aria-hidden="true"></span>
+            <span class="ctrl__text" data-audio-text>BGM ON</span>
+          </button>
+          <button type="button" class="ctrl" data-replay>
+            <span class="ctrl__icon ctrl__icon--replay" aria-hidden="true"></span>
+            <span class="ctrl__text">REPLAY</span>
+          </button>
+        </footer>
+      </div>
+    </main>
+
+    <audio id="bgm" preload="auto" loop src="./bgm.mp3"></audio>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

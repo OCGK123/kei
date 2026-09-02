@@ -1,0 +1,265 @@
+/* ============================================================
+   FLASH — the white wash the opening resolves into.
+   It blows out fast, holds, then clears very slowly so the main
+   scene "develops" behind it rather than cutting in.
+   ============================================================ */
+
+.flash {
+  z-index: 40;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flash.is-blowing {
+  animation: flash-blow 260ms var(--ease-out-hard) both;
+}
+
+/* 700ms hold at full white, then a 2.9s dissolve. */
+.flash.is-clearing {
+  animation: flash-clear 3600ms cubic-bezier(0.33, 0, 0.2, 1) both;
+}
+
+@keyframes flash-blow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flash-clear {
+  0% {
+    opacity: 1;
+  }
+  19% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   SCENE — parallax stage
+   ============================================================ */
+
+.scene {
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scene.is-live {
+  visibility: visible;
+  animation: scene-in 2600ms cubic-bezier(0.25, 0, 0.15, 1) both;
+}
+
+@keyframes scene-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.scene__stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+
+  /* Single source of truth for the character's size. Everything that has
+     to line up with her — her halo's glow, the rotation pivot — is derived
+     from it, so the composition holds at any viewport.
+
+     178vh is chosen so the bottom edge of the screen cuts across her at
+     roughly thigh height: the visible slice is the top ~56% of the art.
+     The vw cap stops her from overflowing sideways on tall windows. */
+  --char-h: min(178vh, 142vw);
+}
+
+/* ---------- background layer --------------------------------------
+   Deliberately near-static. The overscan is only 3% because the
+   translation budget is a handful of pixels — the brief asks for the
+   smallest possible background movement.                            */
+.scene__bg {
+  position: absolute;
+  inset: -3%;
+  background-image: var(--bg-src);
+  background-size: cover;
+  background-position: center 42%;
+  transform: translate3d(0, 0, 0) scale(1.035);
+  will-change: transform;
+  filter: saturate(1.05) contrast(1.02);
+}
+
+/* warm sunset grade + a slow breathing bloom over the windows */
+.scene__bg-grade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 55% at 62% 34%, rgb(255 217 163 / 0.3) 0%, transparent 62%),
+    linear-gradient(180deg, rgb(255 217 163 / 0.08) 0%, transparent 34%, rgb(8 11 20 / 0.36) 100%);
+  mix-blend-mode: screen;
+  animation: grade-breathe 11s ease-in-out infinite;
+}
+
+@keyframes grade-breathe {
+  0%,
+  100% {
+    opacity: 0.78;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------- glow behind her halo -----------------------------------
+   Positioned off --char-h, so it tracks the halo wherever she lands. */
+.scene__glow {
+  position: absolute;
+  left: calc(var(--char-h) * 0.332);
+  top: calc(4vh + var(--char-h) * 0.055);
+  width: calc(var(--char-h) * 0.44);
+  height: calc(var(--char-h) * 0.44);
+  margin: calc(var(--char-h) * -0.22) 0 0 calc(var(--char-h) * -0.22);
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgb(255 47 126 / 0.36) 0%,
+    rgb(255 47 126 / 0.14) 36%,
+    transparent 66%
+  );
+  mix-blend-mode: screen;
+  will-change: transform;
+  animation: glow-pulse 6.5s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------- character layer ---------------------------------------- */
+.scene__char {
+  position: absolute;
+  inset: 0;
+  /* Pivot low and to her side of the frame, so the parallax rotation
+     reads as a sway rather than the layer swinging about the middle. */
+  transform-origin: 26% 100%;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.scene__char-inner {
+  position: absolute;
+  /* Her halo touches the very top edge of the source art, so the layer needs
+     headroom or the parallax lift shaves the top off it. */
+  top: 4vh;
+  left: calc(var(--char-h) * -0.075);
+  height: var(--char-h);
+  width: calc(var(--char-h) * 1024 / 1536);
+  background-image: var(--char-src);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  animation: char-breathe 7.5s ease-in-out infinite;
+}
+
+@keyframes char-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-0.7vh) scale(1.003);
+  }
+}
+
+/* ---------- vignette ------------------------------------------------
+   Weighted to the bottom, which is where the character is cut off — it
+   sells the crop as a deliberate fade rather than a hard edge. */
+.scene__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(128% 96% at 42% 40%, transparent 44%, rgb(8 11 20 / 0.6) 100%),
+    /* right-hand scrim: the sunset behind the title rail is the brightest part
+       of the plate, and white text on it needs ground to stand on */
+    linear-gradient(270deg, rgb(8 11 20 / 0.52) 0%, rgb(8 11 20 / 0.18) 26%, transparent 48%),
+    linear-gradient(180deg, rgb(8 11 20 / 0.4) 0%, transparent 20%, transparent 62%, rgb(8 11 20 / 0.72) 100%);
+}
+
+/* ---------- floating dust motes ------------------------------------ */
+.scene__dust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.scene__dust i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: rgb(255 232 196 / 0.85);
+  box-shadow: 0 0 8px rgb(255 217 163 / 0.8);
+  animation: dust-rise linear infinite;
+}
+
+@keyframes dust-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12vh, 0);
+  }
+  12% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(3vw, -34vh, 0);
+  }
+}
+
+/* ---------- narrow / portrait screens -------------------------------
+   A portrait viewport cannot hold a thigh-height crop without the art
+   growing wider than the screen, so she is framed head-to-calf instead
+   and nudged toward the left half.                                    */
+@media (max-aspect-ratio: 9 / 10) {
+  .scene__stage {
+    --char-h: 142vh;
+  }
+  /* Pulled further left than on desktop: a portrait viewport is narrower than
+     the art, so the offset has to do more work to keep her off the text rail
+     and still land the crop at thigh height. */
+  .scene__char-inner {
+    left: calc(var(--char-h) * -0.34);
+  }
+  .scene__glow {
+    left: calc(var(--char-h) * 0.067);
+  }
+  .scene__char {
+    transform-origin: 34% 100%;
+  }
+  .scene__bg {
+    background-position: 58% 42%;
+  }
+  /* the title sits over her on a phone, so it needs more ground */
+  .scene__vignette {
+    background:
+      radial-gradient(128% 96% at 42% 34%, transparent 42%, rgb(8 11 20 / 0.6) 100%),
+      linear-gradient(180deg, rgb(8 11 20 / 0.4) 0%, transparent 18%, transparent 48%, rgb(8 11 20 / 0.8) 100%);
+  }
+}

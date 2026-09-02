@@ -1,0 +1,61 @@
+/* ============================================================
+   Design tokens — Blue Archive flavoured
+   The game's UI leans on: a cool cyan-blue, a deep navy that is
+   never pure black in the chrome, an off-white paper tone, and a
+   hot magenta reserved for halos and "important" accents.
+   ============================================================ */
+
+:root {
+  /* --- core palette ------------------------------------------------ */
+  --ba-navy-900: #080b14;
+  --ba-navy-800: #101827;
+  --ba-navy-700: #16243c;
+  --ba-navy-600: #1d3355;
+  --ba-blue-500: #2f6fd0;
+  --ba-blue-400: #4b8ff0;
+  --ba-cyan-400: #4fd2ff;
+  --ba-cyan-300: #8fe6ff;
+  --ba-paper: #f2f6fb;
+  --ba-paper-dim: #c3d2e4;
+
+  /* halo — matches the character art's magenta ring */
+  --halo-hot: #ff2f7e;
+  --halo-mid: #ff62a8;
+  --halo-cool: #7c5cff;
+
+  /* warm grade lifted from background.png (sunset office) */
+  --warm-hi: #ffd9a3;
+  --warm-mid: #f0a765;
+  --warm-low: #8a4f34;
+
+  /* --- typography --------------------------------------------------- */
+  --font-tech: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --font-kr: 'Gothic A1', 'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo',
+    system-ui, sans-serif;
+
+  /* --- motion -------------------------------------------------------
+     Blue Archive motion is snappy with a small overshoot on entry and
+     a hard, almost instant exit. These three curves cover nearly all
+     of the game's UI transitions.                                     */
+  --ease-slam: cubic-bezier(0.16, 1.28, 0.28, 1); /* entry, overshoots */
+  --ease-out-hard: cubic-bezier(0.12, 0.86, 0.16, 1); /* decelerate fast */
+  --ease-in-hard: cubic-bezier(0.76, 0, 0.9, 0.2); /* exit, accelerate */
+  --ease-swipe: cubic-bezier(0.55, 0, 0.1, 1); /* band wipes */
+
+  /* --- geometry ------------------------------------------------------
+     The signature skew. Blue Archive's bands and buttons sit on a
+     consistent ~18–20deg lean.                                        */
+  --skew: -18deg;
+  --skew-back: 18deg;
+
+  --hud-pad: clamp(14px, 2.4vw, 34px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ease-slam: linear;
+    --ease-out-hard: linear;
+    --ease-in-hard: linear;
+    --ease-swipe: linear;
+  }
+}
